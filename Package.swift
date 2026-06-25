@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "MiniLunar",
+    name: "DisplayToggle",
     platforms: [
         .macOS(.v13)
     ],

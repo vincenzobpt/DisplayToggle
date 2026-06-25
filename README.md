@@ -1,4 +1,4 @@
-# MiniLunar 🌙
+# DisplayToggle 🌙
 
 A macOS menu bar utility to disconnect the built-in display on MacBook laptops when using an external monitor.
 
@@ -22,11 +22,11 @@ A macOS menu bar utility to disconnect the built-in display on MacBook laptops w
 make install
 ```
 
-This builds the app and installs it to `~/Applications/MiniLunar.app`.
+This builds the app and installs it to `~/Applications/DisplayToggle.app`.
 
 ## Usage
 
-1. Launch MiniLunar — it appears as a 🌙 icon in the menu bar
+1. Launch DisplayToggle — it appears as a 🌙 icon in the menu bar
 2. Click the icon and select **Disconnect Built-in Display**
 3. To reconnect, click the icon again and select **Reconnect Built-in Display**
 4. Enable **Auto BlackOut** for automatic management when connecting/disconnecting external displays
@@ -41,7 +41,7 @@ make run        # Build + bundle + launch
 
 ## How it works
 
-MiniLunar uses a private SkyLight API (`CGSConfigureDisplayEnabled`) to remove the built-in display from the compositing pipeline, which effectively turns it off without putting the MacBook to sleep. This is the same approach used by tools like [Lunar](https://lunar.fyi/) and [mac-display-toggle](https://github.com/nriley/mac-display-toggle).
+DisplayToggle uses a private SkyLight API (`CGSConfigureDisplayEnabled`) to remove the built-in display from the compositing pipeline, which effectively turns it off without putting the MacBook to sleep. This is the same approach used by tools like [Lunar](https://lunar.fyi/) and [mac-display-toggle](https://github.com/nriley/mac-display-toggle).
 
 ## License
 

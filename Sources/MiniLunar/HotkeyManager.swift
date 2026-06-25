@@ -16,7 +16,7 @@ class HotkeyManager {
     private(set) var isRegistered = false
 
     private init() {
-        hotKeyId = EventHotKeyID(signature: 0x4D4C524E, id: 1) // "MLRN" = MiniLunar
+        hotKeyId = EventHotKeyID(signature: 0x4D4C524E, id: 1) // "MLRN" = DisplayToggle
     }
 
     deinit {
@@ -45,9 +45,9 @@ class HotkeyManager {
         if status == noErr {
             isRegistered = true
             installEventHandler()
-            print("[MiniLunar] Emergency hotkey Cmd+Alt+Shift+1 registered")
+            print("[DisplayToggle] Emergency hotkey Cmd+Alt+Shift+1 registered")
         } else {
-            print("[MiniLunar] Failed to register hotkey (error \(status))")
+            print("[DisplayToggle] Failed to register hotkey (error \(status))")
         }
     }
 
@@ -60,7 +60,7 @@ class HotkeyManager {
         UnregisterEventHotKey(ref)
         hotKeyRef = nil
         isRegistered = false
-        print("[MiniLunar] Hotkey unregistered")
+        print("[DisplayToggle] Hotkey unregistered")
     }
 
     // MARK: - Event Handler
@@ -99,11 +99,11 @@ class HotkeyManager {
         let alert = NSAlert()
         alert.messageText = "Accessibility Permission Required"
         alert.informativeText = """
-        MiniLunar needs Accessibility access to monitor the global hotkey \
+        DisplayToggle needs Accessibility access to monitor the global hotkey \
         Cmd+Alt+Shift+1 for emergency display reconnection.
 
         Please go to System Settings → Privacy & Security → Accessibility \
-        and add MiniLunar to the list.
+        and add DisplayToggle to the list.
         """
         alert.alertStyle = .warning
         alert.addButton(withTitle: "Open System Settings")

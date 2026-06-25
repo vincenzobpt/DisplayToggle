@@ -15,7 +15,7 @@ class DisplayManager {
     // MARK: - Constants
     
     static let shared = DisplayManager()
-    private let kSavedBuiltinIDKey = "com.minilunar.savedBuiltinDisplayID"
+    private let kSavedBuiltinIDKey = "com.displaytoggle.savedBuiltinDisplayID"
     
     // MARK: - Properties
     
@@ -48,7 +48,7 @@ class DisplayManager {
         let isActive = CGDisplayIsActive(id) != 0
         isBuiltinDisconnected = !isActive
         if isBuiltinDisconnected {
-            print("[MiniLunar] Detected: built-in display is already disconnected (restored state)")
+            print("[DisplayToggle] Detected: built-in display is already disconnected (restored state)")
         }
     }
     
@@ -80,12 +80,12 @@ class DisplayManager {
             if let sym = findSym(name) {
                 configureFn = unsafeBitCast(sym, to: ConfigureDisplayEnabledFn.self)
                 configureSymbolName = name
-                print("[MiniLunar] Loaded SkyLight API: \(name)")
+                print("[DisplayToggle] Loaded SkyLight API: \(name)")
                 return true
             }
         }
         
-        print("[MiniLunar] ERROR: No SkyLight API symbol found (tried: \(candidates))")
+        print("[DisplayToggle] ERROR: No SkyLight API symbol found (tried: \(candidates))")
         return false
     }
     
@@ -106,7 +106,7 @@ class DisplayManager {
             let id = onlineIDs[i]
             if CGDisplayIsBuiltin(id) != 0 {
                 savedBuiltinDisplayID = id
-                print("[MiniLunar] Built-in display found via CGGetOnlineDisplayList: ID \(id)")
+                print("[DisplayToggle] Built-in display found via CGGetOnlineDisplayList: ID \(id)")
                 return id
             }
         }
@@ -115,7 +115,7 @@ class DisplayManager {
         let mainID = CGMainDisplayID()
         if CGDisplayIsBuiltin(mainID) != 0 {
             savedBuiltinDisplayID = mainID
-            print("[MiniLunar] Built-in display found via CGMainDisplayID: ID \(mainID)")
+            print("[DisplayToggle] Built-in display found via CGMainDisplayID: ID \(mainID)")
             return mainID
         }
         
@@ -123,7 +123,7 @@ class DisplayManager {
         for probeID: CGDirectDisplayID in 1...32 {
             if CGDisplayIsBuiltin(probeID) != 0 {
                 savedBuiltinDisplayID = probeID
-                print("[MiniLunar] Built-in display found via ID probe: \(probeID)")
+                print("[DisplayToggle] Built-in display found via ID probe: \(probeID)")
                 return probeID
             }
         }
@@ -134,13 +134,13 @@ class DisplayManager {
                 let cgID = CGDirectDisplayID(id)
                 if CGDisplayIsBuiltin(cgID) != 0 {
                     savedBuiltinDisplayID = cgID
-                    print("[MiniLunar] Built-in display found via NSScreen: ID \(cgID)")
+                    print("[DisplayToggle] Built-in display found via NSScreen: ID \(cgID)")
                     return cgID
                 }
             }
         }
         
-        print("[MiniLunar] ERROR: Built-in display not found!")
+        print("[DisplayToggle] ERROR: Built-in display not found!")
         return nil
     }
     
@@ -170,7 +170,7 @@ class DisplayManager {
     /// Uses `.permanently` which is what mac-display-toggle and Lunar use.
     private func applyDisplayChange(displayID: CGDirectDisplayID, enabled: Bool) -> Bool {
         guard loadAPI(), let fn = configureFn else {
-            print("[MiniLunar] Apply failed: API not loaded")
+            print("[DisplayToggle] Apply failed: API not loaded")
             return false
         }
         
@@ -185,14 +185,14 @@ class DisplayManager {
         var config: CGDisplayConfigRef?
         var err = CGBeginDisplayConfiguration(&config)
         guard err == .success, let config = config else {
-            print("[MiniLunar] CGBeginDisplayConfiguration failed: \(err.rawValue)")
+            print("[DisplayToggle] CGBeginDisplayConfiguration failed: \(err.rawValue)")
             isApplyingChange = false
             return false
         }
         
         let ret = fn(config, displayID, enabled)
         guard ret == 0 else {
-            print("[MiniLunar] \(configureSymbolName)(enabled: \(enabled)) error: \(ret)")
+            print("[DisplayToggle] \(configureSymbolName)(enabled: \(enabled)) error: \(ret)")
             CGCancelDisplayConfiguration(config)
             isApplyingChange = false
             return false
@@ -200,7 +200,7 @@ class DisplayManager {
         
         err = CGCompleteDisplayConfiguration(config, .permanently)
         guard err == .success else {
-            print("[MiniLunar] CGCompleteDisplayConfiguration failed: \(err.rawValue)")
+            print("[DisplayToggle] CGCompleteDisplayConfiguration failed: \(err.rawValue)")
             isApplyingChange = false
             return false
         }
@@ -211,21 +211,21 @@ class DisplayManager {
     /// Disconnect the built-in display (remove from compositing)
     func disconnectBuiltinDisplay() -> Bool {
         guard loadAPI(), configureFn != nil else {
-            print("[MiniLunar] Disconnect failed: API not loaded")
+            print("[DisplayToggle] Disconnect failed: API not loaded")
             return false
         }
         
         guard let displayID = findBuiltinDisplayID() else {
-            print("[MiniLunar] Disconnect failed: built-in display not found")
+            print("[DisplayToggle] Disconnect failed: built-in display not found")
             return false
         }
         
         guard !isBuiltinDisconnected else {
-            print("[MiniLunar] Display already disconnected, skipping")
+            print("[DisplayToggle] Display already disconnected, skipping")
             return true
         }
         
-        print("[MiniLunar] Disconnecting display \(displayID) via \(configureSymbolName)...")
+        print("[DisplayToggle] Disconnecting display \(displayID) via \(configureSymbolName)...")
         
         // Ensure the display ID is persisted in UserDefaults
         savedBuiltinDisplayID = displayID
@@ -242,28 +242,28 @@ class DisplayManager {
             NotificationCenter.default.post(name: .builtinDisplayStateDidChange, object: nil)
         }
         
-        print("[MiniLunar] Display \(displayID) disconnected successfully")
+        print("[DisplayToggle] Display \(displayID) disconnected successfully")
         return true
     }
     
     /// Reconnect the built-in display (add back to compositing)
     func reconnectBuiltinDisplay() -> Bool {
         guard loadAPI(), configureFn != nil else {
-            print("[MiniLunar] Reconnect failed: API not loaded")
+            print("[DisplayToggle] Reconnect failed: API not loaded")
             return false
         }
         
         guard let displayID = findBuiltinDisplayID() else {
-            print("[MiniLunar] Reconnect failed: built-in display not found")
+            print("[DisplayToggle] Reconnect failed: built-in display not found")
             return false
         }
         
         guard isBuiltinDisconnected else {
-            print("[MiniLunar] Display already connected, skipping")
+            print("[DisplayToggle] Display already connected, skipping")
             return true
         }
         
-        print("[MiniLunar] Reconnecting display \(displayID) via \(configureSymbolName)...")
+        print("[DisplayToggle] Reconnecting display \(displayID) via \(configureSymbolName)...")
         
         let success = applyDisplayChange(displayID: displayID, enabled: true)
         guard success else { return false }
@@ -274,7 +274,7 @@ class DisplayManager {
             NotificationCenter.default.post(name: .builtinDisplayStateDidChange, object: nil)
         }
         
-        print("[MiniLunar] Display \(displayID) reconnected successfully")
+        print("[DisplayToggle] Display \(displayID) reconnected successfully")
         return true
     }
     

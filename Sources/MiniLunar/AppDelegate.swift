@@ -8,8 +8,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Constants
 
-    private let kAutoBlackoutKey = "com.minilunar.autoBlackout"
-    private let kDisconnectedStateKey = "com.minilunar.disconnectedState"
+    private let kAutoBlackoutKey = "com.displaytoggle.autoBlackout"
+    private let kDisconnectedStateKey = "com.displaytoggle.disconnectedState"
 
     // MARK: - UI
 
@@ -52,11 +52,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Show DisplayLink warning if needed
         checkDisplayLink()
 
-        print("[MiniLunar] App started. Apple Silicon: \(isAppleSilicon())")
+        print("[DisplayToggle] App started. Apple Silicon: \(isAppleSilicon())")
         if let id = DisplayManager.shared.findBuiltinDisplayID() {
-            print("[MiniLunar] Built-in display ID: \(id)")
+            print("[DisplayToggle] Built-in display ID: \(id)")
         } else {
-            print("[MiniLunar] Built-in display not found")
+            print("[DisplayToggle] Built-in display not found")
         }
     }
 
@@ -129,7 +129,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem.separator())
 
         // Quit
-        let quitItem = NSMenuItem(title: "Quit MiniLunar", action: #selector(quit), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: "Quit DisplayToggle", action: #selector(quit), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
 
@@ -149,8 +149,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // If registration failed (no accessibility), show guidance
         if !HotkeyManager.shared.isRegistered {
-            print("[MiniLunar] Hotkey registration failed. Accessibility permissions needed.")
-            print("[MiniLunar] To enable: System Settings → Privacy & Security → Accessibility → add MiniLunar")
+            print("[DisplayToggle] Hotkey registration failed. Accessibility permissions needed.")
+            print("[DisplayToggle] To enable: System Settings → Privacy & Security → Accessibility → add DisplayToggle")
             accessibilityMenuItem.title = "⚠️ Enable Accessibility for Cmd+Alt+Shift+1"
             accessibilityMenuItem.isHidden = false
         }
@@ -243,7 +243,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let current = UserDefaults.standard.bool(forKey: kAutoBlackoutKey)
         UserDefaults.standard.set(!current, forKey: kAutoBlackoutKey)
         updateMenuItems()
-        print("[MiniLunar] Auto BlackOut: \(current ? "OFF" : "ON")")
+        print("[DisplayToggle] Auto BlackOut: \(current ? "OFF" : "ON")")
     }
 
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
@@ -278,10 +278,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }.count
 
         if externalCount > 0 && !dm.isBuiltinDisconnected {
-            print("[MiniLunar] Auto BlackOut: External display detected, disconnecting built-in")
+            print("[DisplayToggle] Auto BlackOut: External display detected, disconnecting built-in")
             disconnect()
         } else if externalCount == 0 && dm.isBuiltinDisconnected {
-            print("[MiniLunar] Auto BlackOut: No external displays, reconnecting built-in")
+            print("[DisplayToggle] Auto BlackOut: No external displays, reconnecting built-in")
             reconnect()
         }
     }
@@ -290,7 +290,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func performEmergencyToggle() {
         let dm = DisplayManager.shared
-        print("[MiniLunar] Hotkey: toggling built-in display")
+        print("[DisplayToggle] Hotkey: toggling built-in display")
 
         DispatchQueue.global(qos: .userInitiated).async { [self] in
             let wasDisconnected = dm.isBuiltinDisconnected
@@ -339,7 +339,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         _ = UserDefaults.standard.bool(forKey: kAutoBlackoutKey)
 
         if wasDisconnected {
-            print("[MiniLunar] Restoring previous state: display was disconnected")
+            print("[DisplayToggle] Restoring previous state: display was disconnected")
         }
 
         updateMenuItems()
@@ -377,7 +377,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func showDebugInfo() {
         let info = DisplayManager.shared.debugInfo()
         let alert = NSAlert()
-        alert.messageText = "MiniLunar Debug Info"
+        alert.messageText = "DisplayToggle Debug Info"
         alert.informativeText = info
         alert.alertStyle = .informational
         alert.addButton(withTitle: "Copy to Clipboard")
@@ -436,7 +436,7 @@ extension AppDelegate: NSMenuDelegate {
             HotkeyManager.shared.startMonitoring()
             if HotkeyManager.shared.isRegistered {
                 accessibilityMenuItem.isHidden = true
-                print("[MiniLunar] Hotkey now registered (accessibility was granted)")
+                print("[DisplayToggle] Hotkey now registered (accessibility was granted)")
             }
         }
     }

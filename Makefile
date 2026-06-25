@@ -3,7 +3,7 @@
 
 SWIFT := swift
 BUILD_DIR := .build
-APP_NAME := MiniLunar
+APP_NAME := DisplayToggle
 
 # Source files (inside SPM structure)
 SOURCES := Sources/MiniLunar/*.swift
