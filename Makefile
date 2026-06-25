@@ -6,7 +6,7 @@ BUILD_DIR := .build
 APP_NAME := DisplayToggle
 
 # Source files (inside SPM structure)
-SOURCES := Sources/MiniLunar/*.swift
+SOURCES := Sources/DisplayToggle/*.swift
 
 # Output paths
 BINARY_PATH := $(BUILD_DIR)/release/$(APP_NAME)

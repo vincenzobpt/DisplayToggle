@@ -14,3 +14,6 @@ Package.resolved
 *.swp
 *.swo
 *~
+
+# Release archives
+*.zip

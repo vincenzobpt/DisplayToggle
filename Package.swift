@@ -8,8 +8,7 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "DisplayToggle",
-            path: "Sources/MiniLunar"
+            name: "DisplayToggle"
         )
     ]
 )
